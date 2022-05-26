@@ -1,6 +1,5 @@
 from distutils.util import execute
 from unittest import result
-from urllib.error import HTTPError
 from fastapi import APIRouter, Response
 from starlette.status import HTTP_201_CREATED
 from schemas.input_schema import InputSchema
