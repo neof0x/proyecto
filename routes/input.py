@@ -1,14 +1,37 @@
-from distutils.util import execute
-from unittest import result
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Depends, HTTPException, status
 from starlette.status import HTTP_201_CREATED
 from schemas.input_schema import InputSchema
 from config.db import engine
 from models.input import inputs
-from pydantic import BaseModel
 from typing import List
+import secrets
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 input_router = APIRouter()
+
+
+
+security = HTTPBasic()
+
+
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, "german")
+    correct_password = secrets.compare_digest(credentials.password, "123456")
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect user or password",
+            headers={"WWW-Authenticate": "Basic"},            
+        )
+    return credentials.username
+
+
+@input_router.get("/users/me")
+def read_current_user(username: str = Depends(get_current_username)):
+    return {"username": username}
+
+
+
 
 
 @input_router.get("/api/input", response_model=List[InputSchema])
