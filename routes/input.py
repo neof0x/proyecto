@@ -38,11 +38,11 @@ def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
 
 
-@input_router.get("/api/input", response_model=List[InputCreationRequest])
-def get_input():
-    with engine.connect() as conn:
-        result = conn.execute(inputs.select()).fetchall()
-        return result
+# @input_router.get("/api/input", response_model=List[InputCreationRequest])
+# def get_input():
+#     with engine.connect() as conn:
+#         result = conn.execute(inputs.select()).fetchall()
+#         return result
 
 
 @input_router.get("/data/{input_id}", response_model=InputCreationRequest)
